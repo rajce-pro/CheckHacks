@@ -175,6 +175,7 @@ public class ConfigManager {
     public String  getWebhookUrl()      { return masterConfig.getString("discord.webhook-url", ""); }
     public int     getEmbedColor()      { return masterConfig.getInt("discord.embed-color", 16776960); }
     public String  getDiscordMessage()  { return masterConfig.getString("discord.message", ""); }
+    public boolean isDiscordOnlyDetected() { return masterConfig.getBoolean("discord.only-detected", false); }
     public boolean isDiscordUseComponentsV2() { return masterConfig.getBoolean("discord.use-components-v2", true); }
 
     public boolean isWebEditorEnabled() { return masterConfig.getBoolean("web-editor.enabled", true); }

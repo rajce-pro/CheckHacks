@@ -213,9 +213,12 @@ plugins/CheckHacks/
 **Stuff you will actually use**
 
 ```yaml
-# config.yml and checklang.yml
+# config.yml
 discord:
+  only-detected: false # true sends hack-check webhooks only when at least one result is DETECTED
   use-components-v2: true # false gives you classic embeds, true gives you the new Components V2 Container
+
+# checklang.yml also supports discord.use-components-v2
 
 # checkhacks.yml
 detect-flag:

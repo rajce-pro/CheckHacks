@@ -292,7 +292,7 @@ public class CheckManager {
 
         ConfigManager cfg = plugin.getConfigManager();
 
-        if (cfg.isDiscordEnabled()) {
+        if (cfg.isDiscordEnabled() && (!cfg.isDiscordOnlyDetected() || anyDetected)) {
             String hacksChecked = allHacks.stream()
                     .map(HackDefinition::getDisplayName)
                     .reduce((a, b) -> a + ", " + b).orElse("none");

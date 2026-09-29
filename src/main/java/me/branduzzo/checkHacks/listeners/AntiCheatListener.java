@@ -22,7 +22,11 @@ public class AntiCheatListener implements Listener {
             "ac.grim.grimac.api.events.FlagEvent",
             "ac.grim.grimac.events.FlagEvent"
     };
-    private static final String VULCAN_CLASS  = "me.frep.vulcan.spigot.events.PlayerFlagEvent";
+    private static final String[] VULCAN_CLASSES = {
+            "me.frep.vulcan.api.event.VulcanFlagEvent",
+            "me.frep.vulcan.api.event.PlayerFlagEvent",
+            "me.frep.vulcan.spigot.events.PlayerFlagEvent"
+    };
     private static final String SPARTAN_CLASS = "me.vagdedes.spartan.api.PlayerViolationEvent";
     private static final String MATRIX_CLASS  = "me.rerere.matrix.api.events.PlayerViolationEvent";
 
@@ -39,9 +43,12 @@ public class AntiCheatListener implements Listener {
                 if (tryRegister(cls, "Grim", true)) { ok = true; break; }
             if (!ok) plugin.getLogger().info("[CheckHacks] Grim not found, skipping.");
         }
-        if (plugin.getConfigManager().isVulcanEnabled())
-            if (!tryRegister(VULCAN_CLASS, "Vulcan", false))
-                plugin.getLogger().info("[CheckHacks] Vulcan not found, skipping.");
+        if (plugin.getConfigManager().isVulcanEnabled()) {
+            boolean ok = false;
+            for (String cls : VULCAN_CLASSES)
+                if (tryRegister(cls, "Vulcan", false)) { ok = true; break; }
+            if (!ok) plugin.getLogger().info("[CheckHacks] Vulcan not found, skipping.");
+        }
         if (plugin.getConfigManager().isSpartanEnabled())
             if (!tryRegister(SPARTAN_CLASS, "Spartan", false))
                 plugin.getLogger().info("[CheckHacks] Spartan not found, skipping.");
