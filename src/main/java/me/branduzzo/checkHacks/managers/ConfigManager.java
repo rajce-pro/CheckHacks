@@ -175,6 +175,7 @@ public class ConfigManager {
     public String  getWebhookUrl()      { return masterConfig.getString("discord.webhook-url", ""); }
     public int     getEmbedColor()      { return masterConfig.getInt("discord.embed-color", 16776960); }
     public String  getDiscordMessage()  { return masterConfig.getString("discord.message", ""); }
+    public String  getDiscordThumbnailUrl() { return masterConfig.getString("discord.thumbnail-url", ""); }
     public boolean isDiscordOnlyDetected() { return masterConfig.getBoolean("discord.only-detected", false); }
     public boolean isDiscordUseComponentsV2() { return masterConfig.getBoolean("discord.use-components-v2", true); }
 
@@ -226,6 +227,7 @@ public class ConfigManager {
     public String  getLangWebhookUrl()      { return langConfig.getString("discord.webhook-url", ""); }
     public int     getLangEmbedColor()      { return langConfig.getInt("discord.embed-color", 5763719); }
     public String  getLangDiscordMessage()  { return langConfig.getString("discord.message", ""); }
+    public String  getLangDiscordThumbnailUrl() { return langConfig.getString("discord.thumbnail-url", ""); }
     public boolean isLangDiscordUseComponentsV2() { return langConfig.getBoolean("discord.use-components-v2", true); }
     public int     getLangTimeoutTicks()    { return langConfig.getInt("timeout-ticks", 100); }
 }

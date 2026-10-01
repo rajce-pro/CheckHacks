@@ -229,7 +229,8 @@ command-rules:
 # ──────────────────────────────────────────────
 # PERFORMANCE / RELIABILITY
 # ──────────────────────────────────────────────
-# Re-check DETECTED/PROTECTED results with a second confirmation scan to reduce false positives
+# Re-check DETECTED/PROTECTED results with a second confirmation scan to reduce false positives.
+# When enabled, Discord receives only the confirmation result if the confirmation scan starts.
 doublecheck: true
 # How long to wait for client response per sign (ticks, 20 = 1s)
 timeout-ticks: 200

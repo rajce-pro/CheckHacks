@@ -6,6 +6,8 @@ discord:
   enabled: false
   webhook-url: "https://discord.com/api/webhooks/CHANGE_ME"
   embed-color: 5763719
+  thumbnail-url: ""
+  # Automatically adds ?with_components=true only while Components V2 is enabled.
   use-components-v2: true
   message: "**Player:** &name&\n**Checked by:** &checker&\n**Language:** &lang&"
 

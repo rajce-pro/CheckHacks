@@ -292,16 +292,6 @@ public class CheckManager {
 
         ConfigManager cfg = plugin.getConfigManager();
 
-        if (cfg.isDiscordEnabled() && (!cfg.isDiscordOnlyDetected() || anyDetected)) {
-            String hacksChecked = allHacks.stream()
-                    .map(HackDefinition::getDisplayName)
-                    .reduce((a, b) -> a + ", " + b).orElse("none");
-            WebhookUtil.sendResult(cfg.getWebhookUrl(), cfg.getEmbedColor(),
-                    cfg.getDiscordMessage(), targetName, checkerName,
-                    data.getReason(), hacksChecked, resultText.toString().trim(),
-                    cfg.isDiscordUseComponentsV2());
-        }
-
         if (cfg.isDoubleCheckEnabled() && !data.isConfirmScan() && (anyDetected || anyProtected)) {
             List<HackDefinition> flagged = new ArrayList<>();
             for (HackDefinition hack : allHacks) {
@@ -314,6 +304,16 @@ public class CheckManager {
             }
         }
 
+        if (cfg.isDiscordEnabled() && (!cfg.isDiscordOnlyDetected() || anyDetected)) {
+            String hacksChecked = allHacks.stream()
+                    .map(HackDefinition::getDisplayName)
+                    .reduce((a, b) -> a + ", " + b).orElse("none");
+            WebhookUtil.sendResult(cfg.getWebhookUrl(), cfg.getEmbedColor(),
+                    cfg.getDiscordMessage(), targetName, checkerName,
+                    data.getReason(), hacksChecked, resultText.toString().trim(),
+                    cfg.getDiscordThumbnailUrl(), cfg.isDiscordUseComponentsV2());
+        }
+
         executeResultActions(data, targetName, anyDetected, anyProtected, allClean, results, allHacks);
     }
 
@@ -322,7 +322,7 @@ public class CheckManager {
         if (batches.isEmpty()) return false;
 
         CheckPlayerData data = new CheckPlayerData(target.getUniqueId(),
-                original.getInitiatorUUID(), batches, false, original.getReason(), true);
+                original.getInitiatorUUID(), batches, original.isAutoCheck(), original.getReason(), true);
         activeChecks.put(target.getUniqueId(), data);
 
         Component msg = plugin.getMessageManager().get("doublecheck", Map.of("player", target.getName()));

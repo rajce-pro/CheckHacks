@@ -215,15 +215,16 @@ plugins/CheckHacks/
 ```yaml
 # config.yml
 discord:
+  thumbnail-url: "https://example.com/checkhacks.png" # works with classic embeds and Components V2
   only-detected: false # true sends hack-check webhooks only when at least one result is DETECTED
-  use-components-v2: true # false gives you classic embeds, true gives you the new Components V2 Container
+  use-components-v2: true # automatically adds ?with_components=true; false removes it and uses classic embeds
 
 # checklang.yml also supports discord.use-components-v2
 
 # checkhacks.yml
 detect-flag:
   anticheats: { grim: true, vulcan: true, spartan: true, matrix: true }
-doublecheck: true
+doublecheck: true # Discord sends only the confirmation result when a confirmation scan starts
 timeout-ticks: 200
 between-sign-ticks: 5 # lower it if you want that faster scan speed
 command-if-positive: { enabled: false, command: "tempban %player% 14d Cheating &hack&" }

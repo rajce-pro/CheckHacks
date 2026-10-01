@@ -11,12 +11,21 @@ public class WebhookUtil {
     public static void sendResult(String webhookUrl, int color, String messageTemplate,
                                    String playerName, String checkerName, String reason,
                                    String hacksChecked, String resultText) {
-        sendResult(webhookUrl, color, messageTemplate, playerName, checkerName, reason, hacksChecked, resultText, false);
+        sendResult(webhookUrl, color, messageTemplate, playerName, checkerName, reason,
+                hacksChecked, resultText, "", false);
     }
 
     public static void sendResult(String webhookUrl, int color, String messageTemplate,
                                    String playerName, String checkerName, String reason,
                                    String hacksChecked, String resultText, boolean useComponentsV2) {
+        sendResult(webhookUrl, color, messageTemplate, playerName, checkerName, reason,
+                hacksChecked, resultText, "", useComponentsV2);
+    }
+
+    public static void sendResult(String webhookUrl, int color, String messageTemplate,
+                                   String playerName, String checkerName, String reason,
+                                   String hacksChecked, String resultText, String thumbnailUrl,
+                                   boolean useComponentsV2) {
         if (!isValid(webhookUrl)) return;
         String description = messageTemplate
                 .replace("&name&",    playerName)
@@ -24,45 +33,101 @@ public class WebhookUtil {
                 .replace("&reason&",  reason)
                 .replace("&hacks&",   hacksChecked)
                 .replace("&results&", resultText);
-        sendRaw(webhookUrl, color, description, useComponentsV2);
+        sendRaw(webhookUrl, color, description, thumbnailUrl, useComponentsV2);
     }
 
     public static void sendRaw(String webhookUrl, int color, String description) {
-        sendRaw(webhookUrl, color, description, false);
+        sendRaw(webhookUrl, color, description, "", false);
     }
 
     public static void sendRaw(String webhookUrl, int color, String description, boolean useComponentsV2) {
-        if (!isValid(webhookUrl)) return;
-        String json = useComponentsV2 ? buildComponentsV2Json(color, description) : buildEmbedJson(color, description);
-        sendJson(webhookUrl, json);
+        sendRaw(webhookUrl, color, description, "", useComponentsV2);
     }
 
-    private static String buildEmbedJson(int color, String description) {
+    public static void sendRaw(String webhookUrl, int color, String description,
+                               String thumbnailUrl, boolean useComponentsV2) {
+        if (!isValid(webhookUrl)) return;
+        String json = useComponentsV2
+                ? buildComponentsV2Json(color, description, thumbnailUrl)
+                : buildEmbedJson(color, description, thumbnailUrl);
+        sendJson(configureComponentsQuery(webhookUrl, useComponentsV2), json);
+    }
+
+    private static String buildEmbedJson(int color, String description, String thumbnailUrl) {
+        String thumbnail = hasThumbnail(thumbnailUrl)
+                ? "\"thumbnail\":{\"url\":\"" + escapeJson(thumbnailUrl.trim()) + "\"},"
+                : "";
         return "{\"embeds\":[{"
-                + "\"title\":\"CheckHacks Report\","
+                + "\"title\":\"Detekce\","
                 + "\"description\":\"" + escapeJson(description) + "\","
                 + "\"color\":" + color + ","
-                + "\"footer\":{\"text\":\"CheckHacks - Sign Translation Exploit\"},"
+                + thumbnail
+//                + "\"footer\":{\"text\":\"CheckHacks - Sign Translation Exploit\"},"
                 + "\"timestamp\":\"" + Instant.now() + "\""
                 + "}]}";
     }
 
-    private static String buildComponentsV2Json(int color, String description) {
+    private static String buildComponentsV2Json(int color, String description, String thumbnailUrl) {
         long epochSeconds = Instant.now().getEpochSecond();
-        String content = "## CheckHacks Report\n" + description;
-        String footer = "-# CheckHacks — Sign Translation Exploit • <t:" + epochSeconds + ":F>";
+        String content = "## Detekce\n" + description;
+        String footer = "-# <t:" + epochSeconds + ":F>";
+        String mainComponent = hasThumbnail(thumbnailUrl)
+                ? "{\"type\":9,\"components\":[{\"type\":10,\"content\":\""
+                + escapeJson(content) + "\"}],\"accessory\":{\"type\":11,\"media\":{\"url\":\""
+                + escapeJson(thumbnailUrl.trim()) + "\"}}}"
+                : "{\"type\":10,\"content\":\"" + escapeJson(content) + "\"}";
         return "{\"flags\":32768,\"components\":[{"
                 + "\"type\":17,"
                 + "\"accent_color\":" + color + ","
                 + "\"components\":["
-                + "{\"type\":10,\"content\":\"" + escapeJson(content) + "\"},"
+                + mainComponent + ","
                 + "{\"type\":14,\"divider\":true,\"spacing\":1},"
                 + "{\"type\":10,\"content\":\"" + escapeJson(footer) + "\"}"
                 + "]}]}";
     }
 
+    private static boolean hasThumbnail(String url) {
+        return url != null && !url.isBlank();
+    }
+
     private static boolean isValid(String url) {
         return url != null && !url.isBlank() && !url.contains("CHANGE_ME");
+    }
+
+    private static String configureComponentsQuery(String webhookUrl, boolean useComponentsV2) {
+        int fragmentIndex = webhookUrl.indexOf('#');
+        String fragment = fragmentIndex >= 0 ? webhookUrl.substring(fragmentIndex) : "";
+        String urlWithoutFragment = fragmentIndex >= 0
+                ? webhookUrl.substring(0, fragmentIndex)
+                : webhookUrl;
+
+        int queryIndex = urlWithoutFragment.indexOf('?');
+        String baseUrl = queryIndex >= 0
+                ? urlWithoutFragment.substring(0, queryIndex)
+                : urlWithoutFragment;
+        String query = queryIndex >= 0
+                ? urlWithoutFragment.substring(queryIndex + 1)
+                : "";
+
+        StringBuilder updatedQuery = new StringBuilder();
+        if (!query.isBlank()) {
+            for (String parameter : query.split("&")) {
+                if (parameter.isBlank()) continue;
+                String key = parameter.split("=", 2)[0];
+                if (key.equalsIgnoreCase("with_components")) continue;
+                if (!updatedQuery.isEmpty()) updatedQuery.append('&');
+                updatedQuery.append(parameter);
+            }
+        }
+
+        if (useComponentsV2) {
+            if (!updatedQuery.isEmpty()) updatedQuery.append('&');
+            updatedQuery.append("with_components=true");
+        }
+
+        return baseUrl
+                + (updatedQuery.isEmpty() ? "" : "?" + updatedQuery)
+                + fragment;
     }
 
     private static void sendJson(String webhookUrl, String json) {
