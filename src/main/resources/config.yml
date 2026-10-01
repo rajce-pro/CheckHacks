@@ -31,6 +31,8 @@ discord:
   thumbnail-url: ""
   # true = send webhook reports only when at least one hack result is DETECTED
   only-detected: false
+  # true = include only DETECTED entries in the &results& placeholder
+  only-detected-results: false
   # true = Discord Components V2 (automatically adds ?with_components=true), false = classic embeds
   use-components-v2: true
   message: "**Player:** &name&\n**Checked by:** &checker&\n**Reason:** &reason&\n**Hacks checked:** &hacks&\n**Results:**\n&results&"

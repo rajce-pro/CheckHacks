@@ -177,6 +177,7 @@ public class ConfigManager {
     public String  getDiscordMessage()  { return masterConfig.getString("discord.message", ""); }
     public String  getDiscordThumbnailUrl() { return masterConfig.getString("discord.thumbnail-url", ""); }
     public boolean isDiscordOnlyDetected() { return masterConfig.getBoolean("discord.only-detected", false); }
+    public boolean isDiscordOnlyDetectedResults() { return masterConfig.getBoolean("discord.only-detected-results", false); }
     public boolean isDiscordUseComponentsV2() { return masterConfig.getBoolean("discord.use-components-v2", true); }
 
     public boolean isWebEditorEnabled() { return masterConfig.getBoolean("web-editor.enabled", true); }

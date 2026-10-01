@@ -308,9 +308,16 @@ public class CheckManager {
             String hacksChecked = allHacks.stream()
                     .map(HackDefinition::getDisplayName)
                     .reduce((a, b) -> a + ", " + b).orElse("none");
+            String webhookResults = cfg.isDiscordOnlyDetectedResults()
+                    ? allHacks.stream()
+                    .filter(hack -> results.getOrDefault(hack.getId(), HackResult.SKIPPED)
+                            == HackResult.DETECTED)
+                    .map(hack -> hack.getDisplayName() + ": " + HackResult.DETECTED.name())
+                    .reduce((a, b) -> a + "\n" + b).orElse("none")
+                    : resultText.toString().trim();
             WebhookUtil.sendResult(cfg.getWebhookUrl(), cfg.getEmbedColor(),
                     cfg.getDiscordMessage(), targetName, checkerName,
-                    data.getReason(), hacksChecked, resultText.toString().trim(),
+                    data.getReason(), hacksChecked, webhookResults,
                     cfg.getDiscordThumbnailUrl(), cfg.isDiscordUseComponentsV2());
         }
 
