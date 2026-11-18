@@ -181,8 +181,21 @@ public class ConfigManager {
     public int     getEmbedColor()      { return masterConfig.getInt("discord.embed-color", 16776960); }
     public String  getDiscordMessage()  { return masterConfig.getString("discord.message", ""); }
     public String  getDiscordThumbnailUrl() { return masterConfig.getString("discord.thumbnail-url", ""); }
-    public boolean isDiscordOnlyDetected() { return masterConfig.getBoolean("discord.only-detected", false); }
-    public boolean isDiscordOnlyDetectedResults() { return masterConfig.getBoolean("discord.only-detected-results", false); }
+    // only-detected / only-detected-results are the old key names, still honoured as aliases
+    public boolean isDiscordOnlyFlagged() {
+        return masterConfig.getBoolean("discord.only-flagged", false)
+                || masterConfig.getBoolean("discord.only-detected", false);
+    }
+    public boolean isDiscordOnlyFlaggedResults() {
+        return masterConfig.getBoolean("discord.only-flagged-results", false)
+                || masterConfig.getBoolean("discord.only-detected-results", false);
+    }
+    public int     getDiscordDetectedColor()  { return masterConfig.getInt("discord.detected-color", 15548997); }
+    public int     getDiscordProtectedColor() { return masterConfig.getInt("discord.protected-color", 16705372); }
+    public String  getDiscordActionDetected()  { return masterConfig.getString("discord.action.detected", "Zabanován"); }
+    public String  getDiscordActionProtected() { return masterConfig.getString("discord.action.protected", "Ke kontrole"); }
+    public String  getDiscordActionClean()     { return masterConfig.getString("discord.action.clean", "Žádná"); }
+    public String  getDiscordActionLine()      { return masterConfig.getString("discord.action.line", "**Akce:** &action&"); }
     public boolean isDiscordUseComponentsV2() { return masterConfig.getBoolean("discord.use-components-v2", true); }
 
     public boolean isWebEditorEnabled() { return masterConfig.getBoolean("web-editor.enabled", true); }

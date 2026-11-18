@@ -11,11 +11,22 @@ discord:
   enabled: false
   webhook-url: "https://discord.com/api/webhooks/CHANGE_ME"
   embed-color: 16776960
+  # red when anything is DETECTED (also with PROTECTED), yellow when only PROTECTED
+  detected-color: 15548997
+  protected-color: 16705372
   thumbnail-url: ""
-  only-detected: false
-  only-detected-results: false
+  # send the webhook only when something is DETECTED or PROTECTED
+  only-flagged: false
+  # &results& lists only DETECTED and PROTECTED entries
+  only-flagged-results: false
   use-components-v2: true
-  message: "**Player:** &name&\n**Checked by:** &checker&\n**Reason:** &reason&\n**Hacks checked:** &hacks&\n**Results:**\n&results&"
+  # &action& in the message; if the message has no &action&, "line" is appended at the end
+  action:
+    detected: "Zabanován"
+    protected: "Ke kontrole"
+    clean: "Žádná"
+    line: "**Akce:** &action&"
+  message: "**Player:** &name&\n**Checked by:** &checker&\n**Reason:** &reason&\n**Hacks checked:** &hacks&\n**Results:**\n&results&\n**Akce:** &action&"
 
 bedrock:
   enabled: true

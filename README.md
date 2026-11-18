@@ -232,8 +232,15 @@ plugins/CheckHacks/
 # config.yml
 discord:
   thumbnail-url: "https://example.com/checkhacks.png" # works with classic embeds and Components V2
-  only-detected: false # true sends hack-check webhooks only when at least one result is DETECTED
-  only-detected-results: false # true lists only DETECTED entries inside &results&
+  only-flagged: false # true sends hack-check webhooks only when a result is DETECTED or PROTECTED (old name: only-detected)
+  only-flagged-results: false # true lists only DETECTED/PROTECTED entries inside &results& (old name: only-detected-results)
+  detected-color: 15548997 # used when anything is DETECTED (even together with PROTECTED)
+  protected-color: 16705372 # used when only PROTECTED; clean scans keep embed-color
+  action: # &action& placeholder; "line" is appended if the message has no &action&
+    detected: "Zabanován"
+    protected: "Ke kontrole"
+    clean: "Žádná"
+    line: "**Akce:** &action&"
   use-components-v2: true # automatically adds ?with_components=true; false removes it and uses classic embeds
 alerts:
   default-mode: "all" # all, only-detected or off

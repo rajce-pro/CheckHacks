@@ -299,19 +299,36 @@ public class CheckManager {
             }
         }
 
-        if (cfg.isDiscordEnabled() && (!cfg.isDiscordOnlyDetected() || anyDetected)) {
+        if (cfg.isDiscordEnabled() && (!cfg.isDiscordOnlyFlagged() || anyDetected || anyProtected)) {
             String hacksChecked = allHacks.stream()
                     .map(HackDefinition::getDisplayName)
                     .reduce((a, b) -> a + ", " + b).orElse("none");
-            String webhookResults = cfg.isDiscordOnlyDetectedResults()
+            String webhookResults = cfg.isDiscordOnlyFlaggedResults()
                     ? allHacks.stream()
-                    .filter(hack -> results.getOrDefault(hack.getId(), HackResult.SKIPPED)
-                            == HackResult.DETECTED)
-                    .map(hack -> hack.getDisplayName() + ": " + HackResult.DETECTED.name())
+                    .filter(hack -> {
+                        HackResult result = results.getOrDefault(hack.getId(), HackResult.SKIPPED);
+                        return result == HackResult.DETECTED || result == HackResult.PROTECTED;
+                    })
+                    .map(hack -> hack.getDisplayName() + ": "
+                            + results.getOrDefault(hack.getId(), HackResult.SKIPPED).name())
                     .reduce((a, b) -> a + "\n" + b).orElse("none")
                     : resultText.toString().trim();
-            WebhookUtil.sendResult(cfg.getWebhookUrl(), cfg.getEmbedColor(),
-                    cfg.getDiscordMessage(), targetName, checkerName,
+
+            // DETECTED wins over PROTECTED (red), PROTECTED only = yellow, otherwise the default color
+            int color = anyDetected ? cfg.getDiscordDetectedColor()
+                    : anyProtected ? cfg.getDiscordProtectedColor()
+                    : cfg.getEmbedColor();
+            String action = anyDetected ? cfg.getDiscordActionDetected()
+                    : anyProtected ? cfg.getDiscordActionProtected()
+                    : cfg.getDiscordActionClean();
+            String template = cfg.getDiscordMessage();
+            if (!template.contains("&action&") && !action.isBlank()) {
+                template = template + "\n" + cfg.getDiscordActionLine();
+            }
+            template = template.replace("&action&", action);
+
+            WebhookUtil.sendResult(cfg.getWebhookUrl(), color,
+                    template, targetName, checkerName,
                     reason, hacksChecked, webhookResults,
                     cfg.getDiscordThumbnailUrl(), cfg.isDiscordUseComponentsV2());
         }
